@@ -55,7 +55,7 @@ export const getQuizQuestions = async (input) => {
   }; */
   
   
-export const getQuizQuestions = async (input) => {
+/* export const getQuizQuestions = async (input) => {
     try {
       const chatSession = model.startChat({
         generationConfig,
@@ -66,8 +66,16 @@ export const getQuizQuestions = async (input) => {
       const result = await chatSession.sendMessage(`Generate a quiz on the topic: ${input} with multiple-choice, true/false, and fill-in-the-blank questions. Format the response as a JSON array where each question has the format: {"question": "Question text", "type": "multiple-choice/true-false/fill-in-the-blank", "options": ["option1", "option2", "option3", "option4"], "correct": "correct answer"}`);
       
       // Remove any Markdown backticks or other characters around the JSON data
-      const cleanedResult = result.response.text().replace(/```json|```/g, '').trim();
+     // const cleanedResult = result.response.text().replace(/```json|```/g, '').trim();
 
+      // Extract and clean the response text, removing backticks or extra text
+    let cleanedResult = result.response.text().replace(/```json|```/g, '').trim();
+
+    // Attempt to extract JSON by finding the first opening brace
+    const jsonStartIndex = cleanedResult.indexOf('[');
+    if (jsonStartIndex !== -1) {
+      cleanedResult = cleanedResult.slice(jsonStartIndex); //Remove anything before the json array
+    }
       // Parse the cleaned response as JSON
       const parsedQuestions = JSON.parse(cleanedResult);
       
@@ -76,7 +84,38 @@ export const getQuizQuestions = async (input) => {
       console.error('Error fetching quiz questions:', error);
       throw error;
     }
+  }; */
+
+
+  export const getQuizQuestions = async (input) => {
+    try {
+      const chatSession = model.startChat({
+        generationConfig,
+        history: [],
+      });
+  
+      // Send message to generate a quiz and expect JSON in return
+      const result = await chatSession.sendMessage(`Generate a quiz on the topic: ${input} with multiple-choice, true/false, and fill-in-the-blank questions. Format the response as a JSON array where each question has the format: {"question": "Question text", "type": "multiple-choice/true-false/fill-in-the-blank", "options": ["option1", "option2", "option3", "option4"], "correct": "correct answer"}`);
+  
+      // Extract and clean the response text, removing backticks or extra text
+      let cleanedResult = result.response.text().replace(/```json|```/g, '').trim();
+  
+      // Attempt to extract JSON by finding the first opening brace
+      const jsonStartIndex = cleanedResult.indexOf('[');
+      if (jsonStartIndex !== -1) {
+        cleanedResult = cleanedResult.slice(jsonStartIndex);  // Remove anything before the JSON array
+      }
+  
+      // Parse the cleaned result as JSON
+      const parsedQuestions = JSON.parse(cleanedResult);
+      
+      return parsedQuestions;
+    } catch (error) {
+      console.error('Error fetching quiz questions:', error);
+      throw error;
+    }
   };
+  
 
 export const getFlashcards = async (input) => {
   try {

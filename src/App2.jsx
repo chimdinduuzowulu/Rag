@@ -7,10 +7,10 @@ import InputForm from './components/InputForm';
 import { processFileContent } from './utils/fileProcessor'; // Import a helper to handle file parsing
 
 function App() {
-  // State to manage input, response data, and flashcards
+  // State to manage input and response data
   const [response, setResponse] = useState('');
   const [input, setInput] = useState('');
-  const [flashcards, setFlashcards] = useState(() => JSON.parse(localStorage.getItem('flashcards')) || []);
+  const [flashcards, setFlashcards] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [recommendations, setRecommendations] = useState('');
 
@@ -38,13 +38,7 @@ function App() {
     const inputData = fileContent || input; // Use file content if uploaded, else use input
     try {
       const result = await getFlashcards(inputData);
-      const newFlashcards = result.split('\n').map(item => ({
-        question: item,
-        answer: "Answer Placeholder", // Replace this with dynamic answers if available
-        learned: false,
-      }));
-      setFlashcards(newFlashcards);
-      localStorage.setItem('flashcards', JSON.stringify(newFlashcards));
+      setFlashcards(result.split('\n')); // Assuming the result is a string with new lines separating flashcards
     } catch (error) {
       console.error('Failed to fetch flashcards:', error);
     }
@@ -72,14 +66,6 @@ function App() {
     // Process file to extract text content
     const content = await processFileContent(uploadedFile);
     setFileContent(content);
-  };
-
-  // Function to add a flashcard manually
-  const addManualFlashcard = (question, answer) => {
-    const newFlashcard = { question, answer, learned: false };
-    const updatedFlashcards = [...flashcards, newFlashcard];
-    setFlashcards(updatedFlashcards);
-    localStorage.setItem('flashcards', JSON.stringify(updatedFlashcards));
   };
 
   // Function to format the response for better styling
@@ -141,13 +127,7 @@ function App() {
         {questions.length > 0 && <QuizComponent questions={questions} setQuizResults={setQuizResults} />}
       </div>
       <div id="flashcards">
-        {flashcards.length > 0 && (
-          <FlashcardComponent
-            flashcards={flashcards}
-            setFlashcardsLearned={setFlashcardsLearned}
-            addFlashcard={addManualFlashcard}
-          />
-        )}
+        {flashcards.length > 0 && <FlashcardComponent flashcards={flashcards} setFlashcardsLearned={setFlashcardsLearned} />}
       </div>
       <div id="progress">
         {recommendations && <ProgressComponent recommendations={recommendations} />}
