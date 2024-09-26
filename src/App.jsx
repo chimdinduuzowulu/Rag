@@ -51,11 +51,9 @@ function App() {
     setLoadingFlashcards(true); // Start loading
     try {
       const result = await getFlashcards(inputData);
-
-      // Assuming result is an array of objects with both question and answer fields
-      const parsedFlashcards = result.map(item => ({
-        question: item.question || 'No question provided',
-        answer: item.answer || 'No answer provided',
+      const newFlashcards = result.split('\n').map(item => ({
+        question: item,
+        answer: "Answer Placeholder", // Replace this with dynamic answers if available
         learned: false,
       }));
       setFlashcards(parsedFlashcards);
