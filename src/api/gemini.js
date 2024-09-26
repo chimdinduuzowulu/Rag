@@ -117,7 +117,7 @@ export const getQuizQuestions = async (input) => {
   };
   
 
-export const getFlashcards = async (input) => {
+/* export const getFlashcards = async (input) => {
   try {
     const chatSession = model.startChat({
       generationConfig,
@@ -130,7 +130,42 @@ export const getFlashcards = async (input) => {
     console.error('Error fetching flashcards:', error);
     throw error;
   }
+}; */
+
+export const getFlashcards = async (input) => {
+  try {
+    const chatSession = model.startChat({
+      generationConfig,
+      history: [],
+    });
+
+    // Generate flashcards for the input topic and expect a JSON array
+    const result = await chatSession.sendMessage(`Generate flashcards on the topic: ${input}. Format as a JSON array where each flashcard has {"question": "Question text", "answer": "Answer text"}`);
+
+    // Clean the result to remove unwanted text
+    let cleanedResult = result.response.text().replace(/```json|```/g, '').trim();
+
+    // Try to extract the JSON array by finding the first '[' character
+    const jsonStartIndex = cleanedResult.indexOf('[');
+    if (jsonStartIndex !== -1) {
+      cleanedResult = cleanedResult.slice(jsonStartIndex);  // Remove text before the array
+    }
+
+    // Parse the cleaned response as JSON
+    const flashcards = JSON.parse(cleanedResult);
+
+    // Check if it's an array before returning it
+    if (Array.isArray(flashcards)) {
+      return flashcards; // Return the parsed flashcards
+    } else {
+      throw new Error('Flashcards response is not a valid array');
+    }
+  } catch (error) {
+    console.error('Error fetching flashcards:', error);
+    throw error;
+  }
 };
+
 
 export const getProgressRecommendations = async (input) => {
   try {

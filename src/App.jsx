@@ -38,13 +38,16 @@ function App() {
     const inputData = fileContent || input; // Use file content if uploaded, else use input
     try {
       const result = await getFlashcards(inputData);
-      const newFlashcards = result.split('\n').map(item => ({
-        question: item,
-        answer: "Answer Placeholder", // Replace this with dynamic answers if available
+
+      // Assuming result is an array of objects with both question and answer field
+    /*   const newFlashcar = result.split('\n').map(item => ({ */
+       const parsedFlashcards = result.map(item => ({
+        question: item.question || "No question provided",
+        answer: item.answer || "No answer provided",
         learned: false,
       }));
-      setFlashcards(newFlashcards);
-      localStorage.setItem('flashcards', JSON.stringify(newFlashcards));
+      setFlashcards(parsedFlashcards);
+      localStorage.setItem('flashcards', JSON.stringify(parsedFlashcards));
     } catch (error) {
       console.error('Failed to fetch flashcards:', error);
     }
