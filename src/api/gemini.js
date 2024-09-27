@@ -174,7 +174,7 @@ export const getProgressRecommendations = async (input) => {
       history: [],
     });
 
-    const result = await chatSession.sendMessage(`Give progress recommendations based on this: ${input}`);
+    const result = await chatSession.sendMessage(`Give progress recommendations based on this: ${input}.also, display the number of flashcards, total quizes completed. Also, give the user a nice motivational quote based on his performance`);
     return result.response.text();
   } catch (error) {
     console.error('Error fetching progress recommendations:', error);

@@ -131,6 +131,11 @@ function App() {
 
   // Save quiz results, flashcards learned, and time spent in localStorage
   useEffect(() => {
+    const totalCorrectAnswers = quizResults.reduce((sum, quiz) => sum + quiz.correct, 0);
+    const totalCompletedQuizzes = quizResults.reduce((sum, quiz) => sum + quiz.total, 0);
+
+    localStorage.setItem('totalCorrectAnswers', totalCorrectAnswers);
+  localStorage.setItem('totalCompletedQuizzes', totalCompletedQuizzes);
     localStorage.setItem('quizResults', JSON.stringify(quizResults));
     localStorage.setItem('flashcardsLearned', JSON.stringify(flashcardsLearned));
     localStorage.setItem('timeSpent', JSON.stringify(timeSpent)); // Save time spent

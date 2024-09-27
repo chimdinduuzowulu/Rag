@@ -6,11 +6,17 @@ import { AiOutlineCheckCircle, AiOutlineWarning } from 'react-icons/ai';
 const ProgressComponent = ({ quizzesCompleted, correctAnswers, flashcardsLearned, timeSpent, recommendations }) => {
   const totalQuizzes = 10; // Example total number of quizzes
   const totalFlashcards = 50; // Example total number of flashcards
+  // Fetch total correct answers and quizzes completed from local storage
+  const totalCorrectAnswers = parseInt(localStorage.getItem('totalCorrectAnswers')) || 0;
+  const totalCompletedQuizzes = parseInt(localStorage.getItem('totalCompletedQuizzes')) || 0;
 
   // Calculating percentages
   const quizCompletionPercentage = Math.round((quizzesCompleted / totalQuizzes) * 100);
   const flashcardsLearnedPercentage = Math.round((flashcardsLearned / totalFlashcards) * 100);
-  const correctAnswerRate = Math.round((correctAnswers / quizzesCompleted) * 100);
+  const correctAnswerRate = totalCompletedQuizzes > 0 
+  ? Math.round((totalCorrectAnswers / totalCompletedQuizzes) * 100)
+  : 0;
+  /* const correctAnswerRate = Math.round((correctAnswers / quizzesCompleted) * 100); */
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6 my-8">
@@ -42,7 +48,8 @@ const ProgressComponent = ({ quizzesCompleted, correctAnswers, flashcardsLearned
           <h3 className="text-xl font-semibold mb-2 text-purple-600">Correct Answer Rate</h3>
           {quizzesCompleted > 0 ? (
             <>
-              <p className="text-gray-700 mb-4">Correct answers: {correctAnswers}/{quizzesCompleted}</p>
+{/*               <p className="text-gray-700 mb-4">Correct answers: {correctAnswers}/{quizzesCompleted}</p> */}
+<p className="text-gray-700 mb-4">Correct answers: {totalCorrectAnswers}/{totalCompletedQuizzes}</p>
               <div className="w-full bg-gray-200 rounded-full h-4 mb-2">
                 <div className="bg-purple-600 h-4 rounded-full" style={{ width: `${correctAnswerRate}%` }}></div>
               </div>
@@ -58,7 +65,7 @@ const ProgressComponent = ({ quizzesCompleted, correctAnswers, flashcardsLearned
           <h3 className="text-xl font-semibold mb-2 text-yellow-600">Time Spent on Topics</h3>
           <p className="text-gray-700 mb-4">Total time spent: {timeSpent} minutes</p>
           <div className="w-full bg-gray-200 rounded-full h-4 mb-2">
-            <div className="bg-yellow-600 h-4 rounded-full" style={{ width: `${(timeSpent / 100) * 100}%` }}></div>
+            <div className="bg-yellow-600 h-4 rounded-full w-[90%]" style={{ width: `${(timeSpent / 100) * 100}%` }}></div>
           </div>
           <p className="text-sm text-gray-600">{timeSpent} minutes spent studying</p>
         </div>
