@@ -54,9 +54,20 @@ const FlashcardComponent = ({ flashcards, setFlashcardsLearned, markFlashcardAsL
             <div key={index} className="border p-4 mb-2">
               <div>
                 {/* Toggle front (question) and back (answer) */}
-                <p onClick={() => toggleShowBack(index)} className="cursor-pointer">
+                {/* <p onClick={() => toggleShowBack(index)} className="cursor-pointer">
                   {showBack[index] ? flashcard.answer : flashcard.question}
-                </p>
+                </p> */}
+
+                 {/* Toggle front (question) and back (answer) with animation */}
+                 <p
+                    onClick={() => toggleShowBack(index)}
+                    className={`cursor-pointer transition-transform duration-300 transform ${showBack[index] ? ' text-blue-600' : 'font-normal'}`}
+                    style={{ display: 'inline-block' }}
+                  >
+                    {showBack[index] ? flashcard.answer : flashcard.question}
+                  </p>
+
+
                 <small className="block text-gray-500">Click to flip</small>
               </div>
 

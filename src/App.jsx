@@ -45,25 +45,65 @@ function App() {
     }
   };
 
-  // Handle flashcards generation using either user input or uploaded file content
-  const handleFlashcards = async () => {
-    const inputData = fileContent || input; // Use file content if uploaded, else use input
-    setLoadingFlashcards(true); // Start loading
-    try {
-      const result = await getFlashcards(inputData);
-      const newFlashcards = result.split('\n').map(item => ({
+// Handle flashcards generation using either user input or uploaded file content
+const handleFlashcards = async () => {
+  const inputData = fileContent || input; // Use file content if uploaded, else use input
+  setLoadingFlashcards(true); // Start loading
+  try {
+    const result = await getFlashcards(inputData);
+
+    // Check if result is an array of flashcards directly or needs parsing
+    let newFlashcards = [];
+    if (Array.isArray(result)) {
+      // If the API returned an array of flashcards
+      newFlashcards = result.map(item => ({
+        question: item.question || "Question Placeholder", // Ensure there's a question field
+        answer: item.answer || "Answer Placeholder", // Ensure there's an answer field
+        learned: false,
+      }));
+    } else if (typeof result === 'string') {
+      // If the API returned a string
+      newFlashcards = result.split('\n').map(item => ({
         question: item,
         answer: "Answer Placeholder", // Replace this with dynamic answers if available
         learned: false,
       }));
-      setFlashcards(parsedFlashcards);
-      localStorage.setItem('flashcards', JSON.stringify(parsedFlashcards));
-    } catch (error) {
-      console.error('Failed to fetch flashcards:', error);
-    } finally {
-      setLoadingFlashcards(false); // Stop loading
+    } else {
+      console.error('Unexpected result format:', result);
+      throw new Error('Invalid data format from getFlashcards API');
     }
-  };
+
+    // Update the flashcards state and localStorage
+    setFlashcards(newFlashcards);
+    localStorage.setItem('flashcards', JSON.stringify(newFlashcards));
+  } catch (error) {
+    console.error('Failed to fetch flashcards:', error);
+  } finally {
+    setLoadingFlashcards(false); // Stop loading
+  }
+};
+
+
+  // Handle flashcards generation using either user input or uploaded file content
+  // const handleFlashcards = async () => {
+  //   const inputData = fileContent || input; // Use file content if uploaded, else use input
+  //   setLoadingFlashcards(true); // Start loading
+  //   try {
+  //     const result = await getFlashcards(inputData);
+  //     const newFlashcards = result.split('\n').map(item => ({
+  //       question: item,
+  //       answer: "Answer Placeholder", // Replace this with dynamic answers if available
+  //       learned: false,
+  //     }));
+  //     setFlashcards(newFlashcards);
+  //     localStorage.setItem('flashcards', JSON.stringify(newFlashcards));
+  //   } catch (error) {
+  //     console.error('Failed to fetch flashcards:', error);
+  //   } finally {
+  //     setLoadingFlashcards(false); // Stop loading
+  //   }
+  // };
+
 
   // Handle progress recommendations
   const handleRecommendations = async () => {
