@@ -1,30 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-const FlashcardComponent = ({ flashcards, setFlashcardsLearned, markFlashcardAsLearned, addFlashcard }) => {
-  const [showBack, setShowBack] = useState({}); // State to toggle showing the back of flashcards
-  const [newQuestion, setNewQuestion] = useState('');
-  const [newAnswer, setNewAnswer] = useState('');
-
-  const toggleShowBack = (index) => {
-    setShowBack((prevState) => ({
-      ...prevState,
-      [index]: !prevState[index],
-    }));
-  };
+const FlashcardComponent = ({ flashcards, addFlashcard }) => {
+  const [newQuestion, setNewQuestion] = useState("");
+  const [newAnswer, setNewAnswer] = useState("");
 
   const handleAddFlashcard = () => {
     if (newQuestion && newAnswer) {
       addFlashcard(newQuestion, newAnswer);
-      setNewQuestion('');
-      setNewAnswer('');
+      setNewQuestion("");
+      setNewAnswer("");
     }
   };
 
   return (
-    <div>
+    <div className="w-full">
       <h2 className="text-2xl font-bold">Flashcards</h2>
 
-      {/* Form to add new flashcard */}
       <div className="my-4">
         <input
           type="text"
@@ -40,58 +31,66 @@ const FlashcardComponent = ({ flashcards, setFlashcardsLearned, markFlashcardAsL
           onChange={(e) => setNewAnswer(e.target.value)}
           className="border px-2 py-1 mr-2"
         />
-        <button onClick={handleAddFlashcard} className="bg-blue-500 text-white px-4 py-2 rounded">
+        <button
+          onClick={handleAddFlashcard}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
           Add Flashcard
         </button>
       </div>
 
-      {/* Displaying flashcards */}
-      <div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {flashcards.length === 0 ? (
           <p>No flashcards available. Add some to get started!</p>
         ) : (
           flashcards.map((flashcard, index) => (
-            <div key={index} className="border p-4 mb-2">
-              <div>
-                {/* Toggle front (question) and back (answer) */}
-                {/* <p onClick={() => toggleShowBack(index)} className="cursor-pointer">
-                  {showBack[index] ? flashcard.answer : flashcard.question}
-                </p> */}
+            <div
+              key={index}
+              className="relative w-full h-60 border p-4 hover:shadow-lg transition-shadow duration-300 group mb-6"
+              style={{ perspective: "1000px" }}
+            >
+              <div
+                className="relative w-full h-full transition-transform duration-500 transform-style-preserve-3d hover:rotate-y-180"
+                style={{
+                  transformStyle: "preserve-3d",
+                }}
+              >
+                {/* front */}
+                <div
+                  className="absolute inset-0 flex items-center justify-center bg-white border p-4 overflow-hidden hover:cursor-pointer hover:rotate-y-180"
+                  style={{
+                    backfaceVisibility: "hidden",
+                    transform: "rotateY(0deg)",
+                  }}
+                >
+                  <p className="text-center">{flashcard.question}</p>
+                </div>
 
-                 {/* Toggle front (question) and back (answer) with animation */}
-                 <p
-                    onClick={() => toggleShowBack(index)}
-                    className={`cursor-pointer transition-transform duration-300 transform ${showBack[index] ? ' text-blue-600' : 'font-normal'}`}
-                    style={{ display: 'inline-block' }}
-                  >
-                    {showBack[index] ? flashcard.answer : flashcard.question}
-                  </p>
-
-
-                <small className="block text-gray-500">Click to flip</small>
+                {/* back */}
+                <div
+                  className="absolute inset-0 flex items-center justify-center bg-blue-100 border p-4 overflow-hidden hover:cursor-pointer hover:rotate-y-180"
+                  style={{
+                    backfaceVisibility: "hidden",
+                    transform: "rotateY(180deg)",
+                  }}
+                >
+                  <p className="text-center">{flashcard.answer}</p>
+                </div>
               </div>
 
-              {/* Buttons for marking learned/review later */}
-              <div className="mt-2">
+              {/* Buttons for marking learned */}
+              {/* <div className="mt-4">
                 {!flashcard.learned ? (
-                  <>
-                    <button
-                      className="bg-green-500 text-white px-4 py-2 mr-2 rounded"
-                      onClick={() => markFlashcardAsLearned(index)}
-                    >
-                      Mark as Learned
-                    </button>
-                    <button
-                      className="bg-yellow-500 text-white px-4 py-2 rounded"
-                      onClick={() => alert('Review later functionality here')}
-                    >
-                      Review Later
-                    </button>
-                  </>
+                  <button
+                    className="bg-green-500 text-white px-4 py-2 rounded"
+                    onClick={() => markFlashcardAsLearned(index)}
+                  >
+                    Mark as Learned
+                  </button>
                 ) : (
                   <span className="text-green-500 font-bold">Learned</span>
                 )}
-              </div>
+              </div> */}
             </div>
           ))
         )}
